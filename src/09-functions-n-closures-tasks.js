@@ -1,3 +1,7 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable consistent-return */
+/* eslint-disable prefer-rest-params */
+/* eslint-disable no-restricted-properties */
 /* *********************************************************************************************
  *                                                                                             *
  * Plese read the following tutorial before implementing tasks:                                *
@@ -23,8 +27,13 @@
  *   getComposition(Math.sin, Math.asin)(x) => Math.sin(Math.asin(x))
  *
  */
-function getComposition(/* f, g */) {
-  throw new Error('Not implemented');
+function getComposition(...functions) {
+  return function (...args) {
+    function reducer(result, item) {
+      return item(result);
+    }
+    return functions.reduceRight(reducer, ...args);
+  };
 }
 
 
@@ -44,8 +53,10 @@ function getComposition(/* f, g */) {
  *   power05(16) => 4
  *
  */
-function getPowerFunction(/* exponent */) {
-  throw new Error('Not implemented');
+function getPowerFunction(exponent) {
+  return function (n) {
+    return Math.pow(n, exponent);
+  };
 }
 
 
@@ -62,8 +73,30 @@ function getPowerFunction(/* exponent */) {
  *   getPolynom(8)     => y = 8
  *   getPolynom()      => null
  */
-function getPolynom() {
-  throw new Error('Not implemented');
+function getPolynom(...args) {
+  if (args.length === 3) {
+    const [a, b, c] = args;
+    return function (x) {
+      return a * Math.pow(x, 2) + (x * b) + c;
+    };
+  }
+  if (args.length === 2) {
+    const [a, b] = args;
+
+    return function (x) {
+      return a * x + b;
+    };
+  }
+  if (args.length === 1) {
+    const [a] = args;
+
+    return function () {
+      return a;
+    };
+  }
+  return function () {
+    return null;
+  };
 }
 
 
@@ -81,8 +114,18 @@ function getPolynom() {
  *   ...
  *   memoizer() => the same random number  (next run, returns the previous cached result)
  */
-function memoize(/* func */) {
-  throw new Error('Not implemented');
+function memoize(func) {
+  const storage = {};
+  return function () {
+    const key = JSON.stringify(arguments);
+    if (key in storage) {
+      return storage[key];
+    }
+    // eslint-disable-next-line prefer-spread
+    const val = func.apply(null, arguments);
+    storage[key] = val;
+    return val;
+  };
 }
 
 
@@ -101,8 +144,19 @@ function memoize(/* func */) {
  * }, 2);
  * retryer() => 2
  */
-function retry(/* func, attempts */) {
-  throw new Error('Not implemented');
+function retry(func, attempts) {
+  function retryer(...args) {
+    if (attempts < 0) {
+      return;
+    }
+    try {
+      return func(...args);
+    } catch (e) {
+      attempts -= 1;
+      return retryer(...args);
+    }
+  }
+  return retryer;
 }
 
 
@@ -129,8 +183,15 @@ function retry(/* func, attempts */) {
  * cos(3.141592653589793) ends
  *
  */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return function (...args) {
+    const argsString = JSON.stringify(args);
+    const logString = `${func.name}(${argsString.slice(1, argsString.length - 1)})`;
+    logFunc(`${logString} starts`);
+    const result = func(...args);
+    logFunc(`${logString} ends`);
+    return result;
+  };
 }
 
 
@@ -147,8 +208,12 @@ function logger(/* func, logFunc */) {
  *   partialUsingArguments(fn, 'a','b','c')('d') => 'abcd'
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
-function partialUsingArguments(/* fn, ...args1 */) {
-  throw new Error('Not implemented');
+function partialUsingArguments(fn) {
+  const argsArray = Array.from(arguments);
+  const [, ...partialArguments] = argsArray;
+  return function (...args) {
+    return fn(...partialArguments, ...args);
+  };
 }
 
 
@@ -169,8 +234,11 @@ function partialUsingArguments(/* fn, ...args1 */) {
  *   getId4() => 7
  *   getId10() => 11
  */
-function getIdGeneratorFunction(/* startFrom */) {
-  throw new Error('Not implemented');
+function getIdGeneratorFunction(startFrom) {
+  return function () {
+    startFrom += 1;
+    return startFrom;
+  };
 }
 
 
