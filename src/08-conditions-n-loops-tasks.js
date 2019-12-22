@@ -132,30 +132,10 @@ function isTriangle(a, b, c) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  // function doesOverlap() {
-  //   const topLeft = { x: rect1.left, y: rect1.top };
-  //   const topRight = { x: rect1.left + rect1.width, y: rect1.top };
-  //   const bottomRight = { x: rect1.left + rect1.width, y: rect1.top + rect1.height };
-  //   const bottomLeft = { x: rect1.left, y: rect1.top + rect1.height };
-
-  //   function isPointInRectangle(point, rect) {
-  //     const horizontal = point.x >= rect.left && point.x <= rect.left + rect.width;
-  //     const vertical = point.y >= rect.top && point.y <= rect.top + rect.height;
-
-  //     return horizontal && vertical;
-  //   }
-
-  //   return (
-  //     isPointInRectangle(topLeft, rect2)
-  //         || isPointInRectangle(topRight, rect2)
-  //         || isPointInRectangle(bottomRight, rect2)
-  //         || isPointInRectangle(bottomLeft, rect2)
-  //   );
-  // }
-
-  // return doesOverlap(rect1, rect2) || doesOverlap(rect2, rect1);
-  throw new Error('Not implemented');
+function doRectanglesOverlap(rect1, rect2) {
+  if (rect1.left > rect2.left + rect2.width || rect2.left > rect1.left + rect1.width) return false;
+  if (rect1.top + rect1.height < rect2.top || rect2.top + rect2.height < rect1.top) return false;
+  return true;
 }
 
 
@@ -382,52 +362,20 @@ function getDigitalRoot(num) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  // function checkForBracketsPair(bracket, bracketsConfig) {
-  //   for (let i = 0; i < bracketsConfig.length; i += 1) {
-  //     const j = bracketsConfig[i].indexOf(bracket);
-  //     if (j === 0) {
-  //       return [bracketsConfig[i][j], bracketsConfig[i][j + 1]];
-  //     } if (j === 1) {
-  //       return [bracketsConfig[i][j - 1], bracketsConfig[i][j]];
-  //     }
-  //   }
-  //   return false;
-  // }
-  // const config = [['(', ')'], ['[', ']'], ['{', '}'], ['<', '>']];
-  // function check(bracketsConfig) {
-  //   const array = str.split('');
-  //   const stack = [];
-  //   for (let i = 0; i < array.length; i += 1) {
-  //     const pair = checkForBracketsPair(array[i], bracketsConfig);
-  //     if (i === 0 && pair.indexOf(array[i]) === 0) {
-  //       stack.push(array[i]);
-  //     } else if (pair[0] === pair[1] && stack[stack.length - 1] === pair[0]) {
-  //       stack.pop();
-  //     } else if (pair[0] === pair[1] && stack[stack.length - 1] !== pair[0]) {
-  //       stack.push(array[i]);
-  //     } else if (pair.indexOf(array[i]) === 0 && pair[0] !== pair[1]) {
-  //       stack.push(array[i]);
-  //     } else if (pair.indexOf(array[i]) === 1 && pair.indexOf(stack[stack.length - 1]) === 0) {
-  //       stack.pop();
-  //     } else if (pair[0] === pair[1] && array[i] !== stack[stack.length - 1]) {
-  //       stack.push(array[i]);
-  //     } else if (pair[0] === pair[1] && array[i] === stack[stack.length - 1]) {
-  //       stack.pop();
-  //     } else if (pair[0] !== pair[1] && pair[0] === stack[stack.length - 1]
-  //       && pair.indexOf(array[i]) === 1) {
-  //       stack.pop();
-  //     } else if ((pair[0] !== pair[1] && pair.indexOf(stack[stack.length - 1]) === -1)) {
-  //       return false;
-  //     }
-  //   }
-  //   if (stack.length) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
-  // return check(str, config);
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  const config = ['[', ']', '{', '}', '(', ')', '<', '>'];
+  const stack = [];
+
+  for (let i = 0; i < str.length; i += 1) {
+    const index = config.indexOf(str[i]);
+    if (index % 2 === 0) {
+      stack.push(str[i]);
+    } else if (stack[stack.length - 1] === config[index - 1]) {
+      stack.pop();
+    } else return false;
+  }
+
+  return !stack.length;
 }
 
 
