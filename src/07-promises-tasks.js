@@ -100,13 +100,22 @@ function getFastestPromise(array) {
  *
  */
 function chainPromises(array, action) {
+  const results = [];
+  let final = array.length;
   return new Promise((resolve) => {
-    const result = [];
-    array.forEach((item) => {
-      item.then((value) => result.push(value));
+    const resolveIt = () => { if (results.length === final) resolve(results.reduce(action)); };
+    array.forEach((promise) => {
+      promise
+        .then((nextPromise) => {
+          results.push(nextPromise);
+          resolveIt();
+        })
+        .catch(() => {
+          final -= 1;
+          resolveIt();
+        });
     });
-    resolve(result);
-  }).then((result) => result.reduce(action));
+  });
 }
 
 module.exports = {
